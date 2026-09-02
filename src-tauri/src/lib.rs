@@ -6,7 +6,6 @@ use base64::Engine;
 use lut_core::{build_lut as core_build_lut, MatchStats, Params};
 use std::borrow::Cow;
 use tauri::http::{header::CONTENT_TYPE, Response};
-use tauri_plugin_dialog::DialogExt;
 
 /// 前端资源解密密钥（AES-256-GCM）
 const APP_KEY: [u8; 32] = [
@@ -36,42 +35,28 @@ fn build_lut(size: usize, params: Params, match_stats: Option<MatchStats>) -> St
     base64::engine::general_purpose::STANDARD.encode(&bytes)
 }
 
-/// 保存 .cube LUT：弹出系统"另存为"对话框后写入文件
+/// 写文本文件（保存 .cube LUT）
 #[tauri::command]
-async fn save_cube(app: tauri::AppHandle, filename: String, content: String) -> Result<String, String> {
-    let path = app
-        .dialog()
-        .file()
-        .set_file_name(&filename)
-        .add_filter("LUT 文件", &["cube"])
-        .blocking_save_file()
-        .map_err(|e| e.to_string())?;
+fn write_text(path: String, content: String) -> Result<String, String> {
     std::fs::write(&path, content).map_err(|e| e.to_string())?;
-    Ok(path.to_string_lossy().into_owned())
+    Ok(path)
 }
 
-/// 保存效果图（base64 PNG）：弹出系统"另存为"对话框后写入文件
+/// 写二进制文件（保存效果图，base64 编码的 PNG）
 #[tauri::command]
-async fn save_image(app: tauri::AppHandle, filename: String, data: String) -> Result<String, String> {
+fn write_b64(path: String, data: String) -> Result<String, String> {
     let bytes = base64::engine::general_purpose::STANDARD
         .decode(data)
         .map_err(|e| e.to_string())?;
-    let path = app
-        .dialog()
-        .file()
-        .set_file_name(&filename)
-        .add_filter("PNG 图片", &["png"])
-        .blocking_save_file()
-        .map_err(|e| e.to_string())?;
     std::fs::write(&path, bytes).map_err(|e| e.to_string())?;
-    Ok(path.to_string_lossy().into_owned())
+    Ok(path)
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![build_lut, save_cube, save_image])
+        .invoke_handler(tauri::generate_handler![build_lut, write_text, write_b64])
         .register_uri_scheme_protocol("app", |_ctx, _req| {
             let html = decrypt_frontend();
             Response::builder()
