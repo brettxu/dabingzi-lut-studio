@@ -1,0 +1,22 @@
+[package]
+name = "lut-studio-desktop"
+version = "1.0.0"
+description = "大饼子--万能lut生成器"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+base64 = "0.22"
+aes-gcm = "0.10"
+lut-core = { path = "lut-core" }
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+panic = "abort"
+strip = true

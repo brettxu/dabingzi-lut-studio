@@ -1,0 +1,48 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "DabingziLutStudio",
+  "version": "1.0.0",
+  "identifier": "com.dabingzi.lutstudio",
+  "build": {
+    "frontendDist": "../assets"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "大饼子--万能lut生成器",
+        "width": 1360,
+        "height": 860,
+        "minWidth": 1100,
+        "minHeight": 720,
+        "resizable": true,
+        "center": true,
+        "url": "app://localhost/index.html"
+      }
+    ],
+    "security": {
+      "csp": null
+    },
+    "withGlobalTauri": true
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "nsis",
+      "msi"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser",
+        "languages": [
+          "SimpChinese"
+        ]
+      }
+    }
+  }
+}

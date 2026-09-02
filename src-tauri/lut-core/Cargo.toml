@@ -1,0 +1,20 @@
+[package]
+name = "lut-core"
+version = "0.1.0"
+edition = "2021"
+description = "Color grading LUT core engine (Rust)"
+license = "MIT"
+
+[lib]
+name = "lut_core"
+path = "src/lib.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = "symbols"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
