@@ -45,8 +45,7 @@ async fn save_cube(app: tauri::AppHandle, filename: String, content: String) -> 
         .set_file_name(&filename)
         .add_filter("LUT 文件", &["cube"])
         .blocking_save_file()
-        .and_then(|fp| fp.into_path())
-        .ok_or_else(|| "已取消保存".to_string())?;
+        .map_err(|e| e.to_string())?;
     std::fs::write(&path, content).map_err(|e| e.to_string())?;
     Ok(path.to_string_lossy().into_owned())
 }
@@ -63,8 +62,7 @@ async fn save_image(app: tauri::AppHandle, filename: String, data: String) -> Re
         .set_file_name(&filename)
         .add_filter("PNG 图片", &["png"])
         .blocking_save_file()
-        .and_then(|fp| fp.into_path())
-        .ok_or_else(|| "已取消保存".to_string())?;
+        .map_err(|e| e.to_string())?;
     std::fs::write(&path, bytes).map_err(|e| e.to_string())?;
     Ok(path.to_string_lossy().into_owned())
 }
