@@ -6,6 +6,7 @@ use base64::Engine;
 use lut_core::{build_lut as core_build_lut, MatchStats, Params};
 use std::borrow::Cow;
 use tauri::http::{header::CONTENT_TYPE, Response};
+use tauri_plugin_dialog::DialogExt;
 
 /// 前端资源解密密钥（AES-256-GCM）
 const APP_KEY: [u8; 32] = [
@@ -35,10 +36,44 @@ fn build_lut(size: usize, params: Params, match_stats: Option<MatchStats>) -> St
     base64::engine::general_purpose::STANDARD.encode(&bytes)
 }
 
+/// 保存 .cube LUT：弹出系统"另存为"对话框后写入文件
+#[tauri::command]
+async fn save_cube(app: tauri::AppHandle, filename: String, content: String) -> Result<String, String> {
+    let path = app
+        .dialog()
+        .file()
+        .set_file_name(&filename)
+        .add_filter("LUT 文件", &["cube"])
+        .blocking_save_file()
+        .and_then(|fp| fp.into_path())
+        .ok_or_else(|| "已取消保存".to_string())?;
+    std::fs::write(&path, content).map_err(|e| e.to_string())?;
+    Ok(path.to_string_lossy().into_owned())
+}
+
+/// 保存效果图（base64 PNG）：弹出系统"另存为"对话框后写入文件
+#[tauri::command]
+async fn save_image(app: tauri::AppHandle, filename: String, data: String) -> Result<String, String> {
+    let bytes = base64::engine::general_purpose::STANDARD
+        .decode(data)
+        .map_err(|e| e.to_string())?;
+    let path = app
+        .dialog()
+        .file()
+        .set_file_name(&filename)
+        .add_filter("PNG 图片", &["png"])
+        .blocking_save_file()
+        .and_then(|fp| fp.into_path())
+        .ok_or_else(|| "已取消保存".to_string())?;
+    std::fs::write(&path, bytes).map_err(|e| e.to_string())?;
+    Ok(path.to_string_lossy().into_owned())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![build_lut])
+        .plugin(tauri_plugin_dialog::init())
+        .invoke_handler(tauri::generate_handler![build_lut, save_cube, save_image])
         .register_uri_scheme_protocol("app", |_ctx, _req| {
             let html = decrypt_frontend();
             Response::builder()
