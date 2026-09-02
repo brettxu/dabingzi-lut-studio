@@ -5,6 +5,9 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -53,7 +56,6 @@ jobs:
 
             **下载**：dabingzi-lut-studio.exe（免安装直接运行，推荐）
             　　　　　dabingzi-lut-studio-setup.exe（安装包）
-          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
