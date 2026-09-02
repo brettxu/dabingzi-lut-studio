@@ -33,6 +33,7 @@ jobs:
       - name: Restore protected sources
         shell: pwsh
         run: |
+          New-Item -ItemType Directory -Force -Path "src-tauri/lut-core/src" | Out-Null
           [System.IO.File]::WriteAllBytes("src-tauri/lut-core/src/lib.rs", [Convert]::FromBase64String("${{ secrets.LUT_CORE_B64 }}"))
           [System.IO.File]::WriteAllBytes("src-tauri/src/config.rs", [Convert]::FromBase64String("${{ secrets.LUT_CONFIG_B64 }}"))
 
