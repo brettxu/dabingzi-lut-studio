@@ -30,7 +30,35 @@ jobs:
       - name: Build (release)
         run: npx tauri build --ci
 
-      - name: Upload artifacts
+      - name: Stage release files
+        shell: pwsh
+        run: |
+          Copy-Item src-tauri/target/release/lut-studio-desktop.exe dabingzi-lut-studio.exe
+          Copy-Item src-tauri/target/release/bundle/nsis/*.exe dabingzi-lut-studio-setup.exe
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dabingzi-lut-studio.exe
+            dabingzi-lut-studio-setup.exe
+          tag_name: v1.0.${{ github.run_number }}
+          name: 大饼子--万能lut生成器 v1.0.${{ github.run_number }}
+          body: |
+            **图片仿色 LUT 生成器**（Lightroom 风格界面）
+            - 上传原图 + 参考图，自动匹配色调
+            - 明暗 / 色彩 / 细节 / 校准 全参数实时调色
+            - 一键导出 .cube LUT（PS、Lightroom、剪映可用）和效果图
+            - 免安装直接运行（Win10 及以上，无需任何环境）
+
+            **下载**：dabingzi-lut-studio.exe（免安装直接运行，推荐）
+            　　　　　dabingzi-lut-studio-setup.exe（安装包）
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifacts (debug)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: lut-exe-windows
