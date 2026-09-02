@@ -7,20 +7,13 @@ use lut_core::{build_lut as core_build_lut, MatchStats, Params};
 use std::borrow::Cow;
 use tauri::http::{header::CONTENT_TYPE, Response};
 
-/// 前端资源解密密钥（AES-256-GCM）
-const APP_KEY: [u8; 32] = [
-    0x9c, 0x1f, 0x4a, 0x7e, 0x3b, 0x8d, 0x2f, 0x56, 0xa1, 0xc9, 0xe7, 0xd0, 0x4b, 0x6f, 0x8a, 0x23,
-    0xe5, 0xd7, 0x1c, 0x9b, 0x4a, 0x8f, 0x0e, 0x3d, 0x2c, 0x5b, 0x7a, 0x19, 0xf4, 0xe8, 0xd3, 0xc6,
-];
-const APP_NONCE: [u8; 12] = [
-    0xb3, 0xa7, 0xd9, 0x1e, 0x4c, 0x6f, 0x82, 0x05, 0x3d, 0x9a, 0x71, 0xc4,
-];
+mod config;
 
 /// 解密内嵌的加密前端资源（HTML 不落盘，运行时解密）
 fn decrypt_frontend() -> Vec<u8> {
     let data = include_bytes!("../resources/app_data.enc");
-    let cipher = Aes256Gcm::new_from_slice(&APP_KEY).expect("invalid key length");
-    let nonce = Nonce::from_slice(&APP_NONCE);
+    let cipher = Aes256Gcm::new_from_slice(&config::APP_KEY).expect("invalid key length");
+    let nonce = Nonce::from_slice(&config::APP_NONCE);
     cipher
         .decrypt(nonce, data.as_ref())
         .expect("failed to decrypt frontend resource")
