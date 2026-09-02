@@ -3,3 +3,4 @@ node_modules/
 src-tauri/target/
 src-tauri/lut-core/target/
 src-tauri/lut-core/Cargo.lock
+deliver/
