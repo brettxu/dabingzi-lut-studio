@@ -1,6 +1,6 @@
 [package]
 name = "lut-studio-desktop"
-version = "1.0.13"
+version = "1.0.14"
 description = "大饼子--万能lut生成器"
 edition = "2021"
 
