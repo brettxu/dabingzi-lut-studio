@@ -45,11 +45,17 @@ fn write_b64(path: String, data: String) -> Result<String, String> {
     Ok(path)
 }
 
+/// 返回应用版本号（标题栏显示）
+#[tauri::command]
+fn get_version() -> String {
+    env!("CARGO_PKG_VERSION").to_string()
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![build_lut, write_text, write_b64])
+        .invoke_handler(tauri::generate_handler![build_lut, write_text, write_b64, get_version])
         .register_uri_scheme_protocol("app", |_ctx, _req| {
             let html = decrypt_frontend();
             Response::builder()
