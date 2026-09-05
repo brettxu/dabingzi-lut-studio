@@ -52,8 +52,8 @@ jobs:
           files: |
             dabingzi-lut-studio.exe
             dabingzi-lut-studio-setup.exe
-          tag_name: v1.1.0
-          name: 大饼子--万能lut生成器 v1.1.0
+          tag_name: v1.2.0
+          name: 大饼子--万能lut生成器 v1.2.0
           body: |
             **图片仿色 LUT 生成器**（Lightroom 风格界面）
             - 上传原图 + 参考图，自动匹配色调
