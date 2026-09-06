@@ -37,6 +37,9 @@ jobs:
           [System.IO.File]::WriteAllBytes("src-tauri/lut-core/src/lib.rs", [Convert]::FromBase64String("${{ secrets.LUT_CORE_B64 }}"))
           [System.IO.File]::WriteAllBytes("src-tauri/src/config.rs", [Convert]::FromBase64String("${{ secrets.LUT_CONFIG_B64 }}"))
 
+      - name: Clean build cache (force recompile for version bump)
+        run: cd src-tauri && cargo clean
+
       - name: Build (release)
         run: npx tauri build --ci
 
