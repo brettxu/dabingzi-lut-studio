@@ -52,13 +52,15 @@ jobs:
           files: |
             dabingzi-lut-studio.exe
             dabingzi-lut-studio-setup.exe
-          tag_name: v1.2.0
-          name: 大饼子--万能lut生成器 v1.2.0
+          tag_name: v1.4.0
+          name: 大饼子--万能lut生成器 v1.4.0
           body: |
             **图片仿色 LUT 生成器**（Lightroom 风格界面）
             - 上传原图 + 参考图，自动匹配色调
             - 明暗 / 色彩 / 细节 / 校准 全参数实时调色
-            - 一键导出 .cube LUT（PS、Lightroom、剪映可用）和效果图
+            - 独有色环校准模式，六色扇形随意拖动
+            - 独创亮部和暗部色温色调，分离图片色调
+            - 一键导出 .cube LUT（PS、Lightroom、剪映、达芬奇可用）和效果图
             - 免安装直接运行（Win10 及以上，无需任何环境）
 
             **下载**：dabingzi-lut-studio.exe（免安装直接运行，推荐）
