@@ -3,7 +3,7 @@ use aes_gcm::{
     Aes256Gcm, Nonce,
 };
 use base64::Engine;
-use lut_core::{build_lut as core_build_lut, MatchStats, Params, UserCurves};
+use lut_core::{build_lut as core_build_lut, ImportLut, MatchStats, Params, UserCurves};
 use std::borrow::Cow;
 use tauri::http::{header::CONTENT_TYPE, Response};
 
@@ -22,8 +22,8 @@ fn decrypt_frontend() -> Vec<u8> {
 /// 核心命令：根据参数生成 LUT（算法在 Rust 机器码中，前端 JS 不可见）
 /// 返回 base64 编码的 Float32Array（N*N*N*3 个 float，little-endian）
 #[tauri::command]
-fn build_lut(size: usize, params: Params, match_stats: Option<MatchStats>, curves: Option<UserCurves>) -> String {
-    let lut: Vec<f32> = core_build_lut(size, &params, match_stats.as_ref(), curves.as_ref());
+fn build_lut(size: usize, params: Params, match_stats: Option<MatchStats>, curves: Option<UserCurves>, import_lut: Option<ImportLut>) -> String {
+    let lut: Vec<f32> = core_build_lut(size, &params, match_stats.as_ref(), curves.as_ref(), import_lut.as_ref());
     let bytes: Vec<u8> = lut.iter().flat_map(|v| v.to_le_bytes()).collect();
     base64::engine::general_purpose::STANDARD.encode(&bytes)
 }
