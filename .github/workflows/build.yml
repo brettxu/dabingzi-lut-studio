@@ -46,19 +46,20 @@ jobs:
       - name: Stage release files
         shell: pwsh
         run: |
-          Copy-Item src-tauri/target/release/lut-studio-desktop.exe dabingzi-lut-studio-v1.7.2.exe
-          Copy-Item src-tauri/target/release/bundle/nsis/*.exe dabingzi-lut-studio-v1.7.2-setup.exe
+          Copy-Item src-tauri/target/release/lut-studio-desktop.exe dabingzi-lut-studio-v1.7.3.exe
+          Copy-Item src-tauri/target/release/bundle/nsis/*.exe dabingzi-lut-studio-v1.7.3-setup.exe
 
       - name: Publish Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dabingzi-lut-studio-v1.7.2.exe
-            dabingzi-lut-studio-v1.7.2-setup.exe
-          tag_name: v1.7.2
-          name: 大饼子--万能lut生成器 v1.7.2
+            dabingzi-lut-studio-v1.7.3.exe
+            dabingzi-lut-studio-v1.7.3-setup.exe
+          tag_name: v1.7.3
+          name: 大饼子--万能lut生成器 v1.7.3
           body: |
             **图片仿色 LUT 生成器**（Lightroom 风格界面）
+            - v1.7.3 撤销优化：滑块一次拖动只记1步(松手才记录)，+/-微调、单项/分组复位均可撤销，恢复更符合直觉
             - v1.7.2 曲线端点可横向拖动（黑白场裁切）；修正亮部/阴影色调示意色（左绿右洋红）；肤色区块重排（肤明度置顶、肤色色相统一为绿↔洋红、新增皮肤饱和度）
             - v1.7.1 新增导入外部 .cube LUT：可在已有 LUT 基础上继续调整后再导出；导入 LUT 与参考图二选一、共用匹配强度；修复删除图片后同名文件可再次上传
             - v1.7.0 新增 RGB 曲线工具：独立模块（细节与校准之间），L/R/G/B 四通道可打点拖动，+3点一键布点，效果全部烧入导出的 .cube
@@ -73,8 +74,8 @@ jobs:
             - 一键导出 .cube LUT（PS、Lightroom、剪映、达芬奇可用）和效果图
             - 免安装直接运行（Win10 及以上，无需任何环境）
 
-            **下载**：dabingzi-lut-studio-v1.7.2.exe（免安装直接运行，推荐）
-            　　　　　dabingzi-lut-studio-v1.7.2-setup.exe（安装包）
+            **下载**：dabingzi-lut-studio-v1.7.3.exe（免安装直接运行，推荐）
+            　　　　　dabingzi-lut-studio-v1.7.3-setup.exe（安装包）
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
