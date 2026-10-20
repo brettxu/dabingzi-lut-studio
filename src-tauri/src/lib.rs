@@ -3,7 +3,12 @@ use aes_gcm::{
     Aes256Gcm, Nonce,
 };
 use base64::Engine;
-use lut_core::{build_lut as core_build_lut, ImportLut, MatchStats, Params, UserCurves};
+use lut_core::{
+    build_lut as core_build_lut,
+    decode_raw as core_decode_raw,
+    decode_raw_bytes as core_decode_raw_bytes,
+    ImportLut, MatchStats, Params, UserCurves,
+};
 use std::borrow::Cow;
 use tauri::http::{header::CONTENT_TYPE, Response};
 
@@ -51,11 +56,46 @@ fn get_version() -> String {
     env!("CARGO_PKG_VERSION").to_string()
 }
 
+/// RAW 解码结果（rgba 以 base64 传输）
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct RawResult {
+    width: usize,
+    height: usize,
+    data: String, // base64 编码的 sRGB RGBA
+}
+
+/// 解码 RAW（.cr2/.cr3/.nef/.arw/.raf/.dng 等）为中性 sRGB 图
+/// 仅 exe（桌面端）提供；网页版不支持 RAW。
+#[tauri::command]
+fn decode_raw(path: String, max_dim: Option<usize>) -> Result<RawResult, String> {
+    let r = core_decode_raw(&path, max_dim.unwrap_or(3840))?;
+    Ok(RawResult {
+        width: r.width,
+        height: r.height,
+        data: base64::engine::general_purpose::STANDARD.encode(&r.rgba),
+    })
+}
+
+/// 解码 RAW（前端把文件字节以 base64 传入，复用现有上传入口）
+#[tauri::command]
+fn decode_raw_b64(data: String, max_dim: Option<usize>) -> Result<RawResult, String> {
+    let bytes = base64::engine::general_purpose::STANDARD
+        .decode(data)
+        .map_err(|e| e.to_string())?;
+    let r = core_decode_raw_bytes(&bytes, max_dim.unwrap_or(3840))?;
+    Ok(RawResult {
+        width: r.width,
+        height: r.height,
+        data: base64::engine::general_purpose::STANDARD.encode(&r.rgba),
+    })
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![build_lut, write_text, write_b64, get_version])
+        .invoke_handler(tauri::generate_handler![build_lut, write_text, write_b64, get_version, decode_raw, decode_raw_b64])
         .register_uri_scheme_protocol("app", |_ctx, _req| {
             let html = decrypt_frontend();
             Response::builder()

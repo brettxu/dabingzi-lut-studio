@@ -18,3 +18,5 @@ strip = "symbols"
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
+rawler = { version = "0.8", default-features = false }
+demosaic = "0.3"

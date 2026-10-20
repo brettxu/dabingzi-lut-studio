@@ -5,4 +5,5 @@ src-tauri/lut-core/target/
 src-tauri/lut-core/Cargo.lock
 deliver/
 src-tauri/lut-core/src/lib.rs
+src-tauri/lut-core/src/main.rs
 src-tauri/src/config.rs
